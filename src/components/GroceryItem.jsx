@@ -1,100 +1,66 @@
-import { useMemo, useState } from "react";
-import "./App.css";
-import GroceryItem from "./components/GroceryItem";
+import { useState } from "react";
 
-const App = () => {
-  const [items, setItems] = useState([
-    { id: crypto.randomUUID(), text: "Milk" },
-    { id: crypto.randomUUID(), text: "Eggs" },
-    { id: crypto.randomUUID(), text: "Bread" },
-  ]);
+const GroceryItem = ({ item, onDelete, onUpdate, index }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(item.text);
 
-  const [newItem, setNewItem] = useState("");
-
-  // Add/Insert New Item
-  const handleAdd = (e) => {
-    e.preventDefault();
-
-    const trimmed = newItem.trim();
-    if (!trimmed) return;
-
-    setItems((prev) => [{ id: crypto.randomUUID(), text: trimmed }, ...prev]);
-    setNewItem("");
+  const startEdit = () => {
+    setDraft(item.text);
+    setIsEditing(true);
   };
 
-  // Delete/Remove Existing Item (filter)
-  const handleDelete = (id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const cancelEdit = () => {
+    setDraft(item.text);
+    setIsEditing(false);
   };
 
-  // Update Existing Item (map)
-  const handleUpdate = (id, updatedText) => {
-    const trimmed = updatedText.trim();
-    if (!trimmed) return;
-
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, text: trimmed } : item))
-    );
+  const saveEdit = () => {
+    onUpdate(item.id, draft);
+    setIsEditing(false);
   };
-
-  // Reduce example (helps rubric)
-  const totalChars = useMemo(() => {
-    return items.reduce((sum, item) => sum + item.text.length, 0);
-  }, [items]);
 
   return (
-    <div className="page">
-      <h1 className="title">Grocery List App</h1>
-      <p className="subtext">
-        Add, edit, and delete grocery items (map / filter / reduce).
-      </p>
+    <div className="gItem">
+      <div className="left">
+        <span className="badge">#{index + 1}</span>
 
-      <form className="form" onSubmit={handleAdd}>
-        <label className="label" htmlFor="groceryInput">
-          New Item
-        </label>
-
-        <div className="formRow">
+        {isEditing ? (
           <input
-            id="groceryInput"
-            className="input"
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            placeholder="e.g., Rice, Apples, Chicken..."
+            className="editInput"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
           />
-          <button className="primaryBtn" type="submit">
-            Add
-          </button>
-        </div>
-      </form>
-
-      <div className="stats">
-        <p>
-          <strong>Total items:</strong> {items.length}
-        </p>
-        <p>
-          <strong>Total characters:</strong> {totalChars}
-        </p>
+        ) : (
+          <span className="text">{item.text}</span>
+        )}
       </div>
 
-      {items.length === 0 ? (
-        <p className="empty">No items yet. Add your first grocery item!</p>
-      ) : (
-        <ul className="list">
-          {items.map((item, index) => (
-            <li key={item.id} className="listItem">
-              <GroceryItem
-                item={item}
-                index={index}
-                onDelete={handleDelete}
-                onUpdate={handleUpdate}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="actions">
+        {isEditing ? (
+          <>
+            <button type="button" className="smallBtn" onClick={saveEdit}>
+              Save
+            </button>
+            <button type="button" className="smallBtn ghost" onClick={cancelEdit}>
+              Cancel
+            </button>
+          </>
+        ) : (
+          <button type="button" className="smallBtn" onClick={startEdit}>
+            Edit
+          </button>
+        )}
+
+        <button
+          type="button"
+          className="smallBtn danger"
+          onClick={() => onDelete(item.id)}
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 };
 
-export default App;
+export default GroceryItem;
