@@ -10,6 +10,8 @@ The app allows users to add, view, edit, and delete grocery items.
 - Edit items
 - Delete items
 - Simple and clean UI
+- Simple stats display (item count)
+- Digits / Alphabet Counter 
 
 ## Technologies Used
 - React
