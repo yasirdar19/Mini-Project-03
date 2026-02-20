@@ -1,24 +1,25 @@
 import { useState } from "react";
-
+// GroceryItem component receives props from App
 const GroceryItem = ({ item, onDelete, onUpdate, index }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [draft, setDraft] = useState(item.text);
+  const [draft, setDraft] = useState(item.text);// stores edited text
 
+ // Start editing
   const startEdit = () => {
     setDraft(item.text);
     setIsEditing(true);
   };
-
+ // Cancel editing
   const cancelEdit = () => {
     setDraft(item.text);
     setIsEditing(false);
   };
-
+  // Save edited text and send update
   const saveEdit = () => {
     onUpdate(item.id, draft);
     setIsEditing(false);
   };
-
+  
   return (
     <div className="gItem">
       <div className="left">
