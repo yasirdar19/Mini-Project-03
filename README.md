@@ -22,4 +22,5 @@ The app allows users to add, view, edit, and delete grocery items.
    ```bash
    npm install
 2. Run the project
+   ```bash
    npm run dev
